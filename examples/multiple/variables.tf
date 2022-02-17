@@ -26,11 +26,9 @@ variable "secrets" {
 }
 
 variable "add_kms_permissions" {
-  type    = list(string)
-  default = []
+  type  = list(string)
 }
 
 variable "add_pubsub_permissions" {
-  type    = list(string)
-  default = []
+  type  = list(string)
 }

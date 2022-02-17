@@ -3,6 +3,11 @@ variable "project_id" {
   description = "The project ID to manage the Pub/Sub resources"
 }
 
+variable "region" {
+  type        = string
+  description = "Region to create kms key and secret replicas in"
+}
+
 variable "secrets" {
   type = list(object({
     name                  = string
@@ -23,14 +28,4 @@ variable "secrets" {
   }))
   description = "The list of the secrets"
   default     = []
-}
-
-variable "add_kms_permissions" {
-  type    = list(string)
-  default = []
-}
-
-variable "add_pubsub_permissions" {
-  type    = list(string)
-  default = []
 }

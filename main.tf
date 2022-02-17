@@ -1,41 +1,41 @@
-locals {
-  kms_keys = flatten([
-    for secret in var.secrets: [
-      for replication in secret.user_managed_replication: [
-        replication.kms_key_name
-       ] if lookup(replication, "kms_key_name", null) != null
-    ] if lookup(secret, "user_managed_replication", null) != null
-  ])
-  pubsub_topics = flatten([
-    for secret in var.secrets: [
-      for topic in secret.topics: [
-        topic.name
-      ] if lookup(topic, "name", null) != null 
-    ] if lookup(secret, "topics", null) != null
-  ])
-}
+# locals {
+#   kms_keys = flatten([
+#     for secret in var.secrets : [
+#       for replication in secret.user_managed_replication : [
+#         replication.kms_key_name
+#       ] if lookup(replication, "kms_key_name", null) != null
+#     ] if lookup(secret, "user_managed_replication", null) != null
+#   ])
+#   pubsub_topics = flatten([
+#     for secret in var.secrets : [
+#       for topic in secret.topics : [
+#         topic.name
+#       ] if lookup(topic, "name", null) != null
+#     ] if lookup(secret, "topics", null) != null
+#   ])
+# }
+
 resource "google_project_service_identity" "secretmanager_identity" {
-  # count = length(for s in var.secrets: s.user_managed_replication.kms_key_name if lookup(s.user_managed_replication, "kms_key_name",[]))
-  count    = length([local.kms_keys]) > 0 || length([local.pubsub_topics]) > 0 ? 1 : 0
+  count    = length(var.add_kms_permissions) > 0 || length(var.add_pubsub_permissions) > 0 ? 1 : 0
   provider = google-beta
-  project = var.project_id
-  service = "secretmanager.googleapis.com"
+  project  = var.project_id
+  service  = "secretmanager.googleapis.com"
 }
 
 
 resource "google_kms_crypto_key_iam_member" "sm_sa_encrypter_decrypter" {
-  role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  member  = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
-  for_each = toset(local.kms_keys)
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
+  for_each      = toset(var.add_kms_permissions)
   crypto_key_id = each.value
 }
 
 resource "google_pubsub_topic_iam_member" "sm_sa_publisher" {
-  project = var.project_id
-  role    = "roles/pubsub.publisher"
-  member  = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
-  for_each = toset(local.pubsub_topics)
-  topic = each.value
+  project  = var.project_id
+  role     = "roles/pubsub.publisher"
+  member   = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
+  for_each = toset(var.add_pubsub_permissions)
+  topic    = each.value
 }
 
 resource "google_secret_manager_secret" "secrets" {
@@ -85,6 +85,5 @@ resource "google_secret_manager_secret" "secrets" {
 resource "google_secret_manager_secret_version" "secret-version" {
   for_each = { for secret in var.secrets : secret.name => secret }
   secret   = google_secret_manager_secret.secrets[each.value.name].id
-
   secret_data = each.value.secret_data
 }
