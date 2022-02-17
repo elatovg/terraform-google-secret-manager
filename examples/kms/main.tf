@@ -40,7 +40,7 @@ module "secretmanager" {
       secret_data = "secret information"
     },
   ]
-  add_kms_permissions = []
+  add_kms_permissions    = []
   add_pubsub_permissions = []
   depends_on = [
     google_kms_crypto_key_iam_member.sm_sa_encrypter_decrypter
