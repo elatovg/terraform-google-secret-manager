@@ -23,7 +23,6 @@ module "secret_manager" {
 Functional examples are included in the
 [examples](./examples/) directory.
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -38,8 +37,6 @@ Functional examples are included in the
 | Name | Description |
 |------|-------------|
 | secret\_names | The name list of Secrets |
-
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Requirements
 

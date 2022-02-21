@@ -1,24 +1,22 @@
-# Simple Example
+## Requirements
 
-This example illustrates how to use the `secret-manager` module.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.0 |
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Providers
+
+No providers.
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| project\_id | The project ID to manage the secrets resources | `string` | n/a | yes |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The project ID to manage the Secret Manager resources | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| secret\_names | List of secret names |
-
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
-To provision this example, run the following from within this directory:
-- `terraform init` to get the plugins
-- `terraform plan` to see the infrastructure plan
-- `terraform apply` to apply the infrastructure build
-- `terraform destroy` to destroy the built infrastructure
+| <a name="output_secret_names"></a> [secret\_names](#output\_secret\_names) | List of secret names |
