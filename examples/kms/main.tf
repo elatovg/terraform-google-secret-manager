@@ -1,11 +1,15 @@
+resource "random_id" "random_kms_suffix" {
+  byte_length = 2
+}
+
 resource "google_kms_key_ring" "key_ring" {
-  name     = "key-ring-crqjhk"
+  name     = "key-ring-${random_id.random_kms_suffix.hex}"
   location = var.region
   project  = var.project_id
 }
 
 resource "google_kms_crypto_key" "crypto_key" {
-  name     = "crypto-key-ra8hst"
+  name     = "crypto-key-${random_id.random_kms_suffix.hex}s"
   key_ring = google_kms_key_ring.key_ring.id
 }
 
@@ -21,7 +25,7 @@ resource "google_kms_crypto_key_iam_member" "sm_sa_encrypter_decrypter" {
   crypto_key_id = google_kms_crypto_key.crypto_key.id
 }
 
-module "secretmanager" {
+module "secret-manager" {
   source     = "../../"
   project_id = var.project_id
   secrets = [

@@ -22,20 +22,22 @@ resource "google_project_service_identity" "secretmanager_identity" {
   service  = "secretmanager.googleapis.com"
 }
 
-
 resource "google_kms_crypto_key_iam_member" "sm_sa_encrypter_decrypter" {
+  # for_each      = toset(var.add_kms_permissions)
+  count         = var.add_kms_permissions != null ? length(var.add_kms_permissions) : 0
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
-  for_each      = toset(var.add_kms_permissions)
-  crypto_key_id = each.value
+  crypto_key_id = var.add_kms_permissions[count.index]
 }
 
 resource "google_pubsub_topic_iam_member" "sm_sa_publisher" {
-  project  = var.project_id
-  role     = "roles/pubsub.publisher"
-  member   = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
-  for_each = toset(var.add_pubsub_permissions)
-  topic    = each.value
+  project = var.project_id
+  # for_each = toset(var.add_pubsub_permissions)
+  count  = var.add_pubsub_permissions != null ? length(var.add_pubsub_permissions) : 0
+  role   = "roles/pubsub.publisher"
+  member = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
+  # topic    = each.value
+  topic = var.add_pubsub_permissions[count.index]
 }
 
 resource "google_secret_manager_secret" "secrets" {
@@ -83,7 +85,7 @@ resource "google_secret_manager_secret" "secrets" {
 }
 
 resource "google_secret_manager_secret_version" "secret-version" {
-  for_each = { for secret in var.secrets : secret.name => secret }
-  secret   = google_secret_manager_secret.secrets[each.value.name].id
+  for_each    = { for secret in var.secrets : secret.name => secret }
+  secret      = google_secret_manager_secret.secrets[each.value.name].id
   secret_data = each.value.secret_data
 }

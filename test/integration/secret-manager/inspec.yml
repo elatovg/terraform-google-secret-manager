@@ -1,0 +1,10 @@
+name: cloud-secret-manager
+title: Google Cloud Secret Manager
+version: 0.1.0
+attributes:
+  - name: project_id
+    type: string
+    required: true
+  - name: project_number
+    type: string
+    required: true

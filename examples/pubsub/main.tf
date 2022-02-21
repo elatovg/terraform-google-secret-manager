@@ -1,7 +1,10 @@
+resource "random_id" "random_topic_id_suffix" {
+  byte_length = 2
+}
+
 resource "google_pubsub_topic" "secret" {
-  project                    = var.project_id
-  name                       = "topic-for-secret-rotation"
-  message_retention_duration = "86600s"
+  project = var.project_id
+  name    = "topic-${random_id.random_topic_id_suffix.hex}"
 }
 
 resource "google_project_service_identity" "secretmanager_identity" {
@@ -17,7 +20,7 @@ resource "google_pubsub_topic_iam_member" "sm_sa_publisher" {
   topic   = google_pubsub_topic.secret.name
 }
 
-module "secretmanager" {
+module "secret-manager" {
   source     = "../../"
   project_id = var.project_id
   secrets = [

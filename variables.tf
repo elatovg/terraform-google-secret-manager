@@ -1,6 +1,6 @@
 variable "project_id" {
   type        = string
-  description = "The project ID to manage the Pub/Sub resources"
+  description = "The project ID to manage the Secret Manager resources"
 }
 
 variable "secrets" {
@@ -26,11 +26,13 @@ variable "secrets" {
 }
 
 variable "add_kms_permissions" {
-  type    = list(string)
-  default = []
+  type        = list(string)
+  description = "The list of the crypto keys to give secret manager access to"
+  default     = []
 }
 
 variable "add_pubsub_permissions" {
-  type    = list(string)
-  default = []
+  type        = list(string)
+  description = "The list of the pubsub topics to give secret manager access to"
+  default     = []
 }

@@ -1,4 +1,4 @@
-module "secretmanager" {
+module "secret-manager" {
   source     = "../../"
   project_id = var.project_id
   secrets = [
