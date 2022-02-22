@@ -1,6 +1,6 @@
 # terraform-google-secret-manager
 
-This modules makes it easy to create Google Secret Manager secrets. 
+This modules makes it easy to create Google Secret Manager secrets.
 
 ## Usage
 
@@ -10,7 +10,6 @@ Basic usage of this module is as follows:
 module "secret-manager" {
   source  = "terraform-google-modules/secret-manager/google"
   version = "~> 0.1"
-  
   project_id = var.project_id
   secrets = [
     {
