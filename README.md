@@ -1,27 +1,32 @@
 # terraform-google-secret-manager
 
-This module was generated from [terraform-google-module-template](https://github.com/terraform-google-modules/terraform-google-module-template/), which by default generates a module that simply creates a GCS bucket. As the module develops, this README should be updated.
-
-The resources/services/activations/deletions that this module will create/trigger are:
-
-- Create a GCS bucket with the provided name
+This modules makes it easy to create Google Secret Manager secrets. 
 
 ## Usage
 
 Basic usage of this module is as follows:
 
 ```hcl
-module "secret_manager" {
+module "secret-manager" {
   source  = "terraform-google-modules/secret-manager/google"
   version = "~> 0.1"
-
-  project_id  = "<PROJECT ID>"
-  bucket_name = "gcs-test-bucket"
+  
+  project_id = var.project_id
+  secrets = [
+    {
+      name                     = "secret-1"
+      automatic_replication    = true
+      user_managed_replication = null
+      labels                   = null
+      topics                   = null
+      rotation                 = null
+      secret_data              = "secret information"
+    },
+  ]
 }
 ```
 
-Functional examples are included in the
-[examples](./examples/) directory.
+Functional examples are included in the [examples](./examples/) directory.
 
 ## Inputs
 
@@ -30,7 +35,7 @@ Functional examples are included in the
 | add\_kms\_permissions | The list of the crypto keys to give secret manager access to | `list(string)` | `[]` | no |
 | add\_pubsub\_permissions | The list of the pubsub topics to give secret manager access to | `list(string)` | `[]` | no |
 | project\_id | The project ID to manage the Secret Manager resources | `string` | n/a | yes |
-| secrets | The list of the secrets | <pre>list(object({<br>    name                  = string<br>    automatic_replication = bool<br>    user_managed_replication = list(object({<br>      location     = string<br>      kms_key_name = string<br>    }))<br>    labels = map(string)<br>    topics = list(object({<br>      name = string<br>    }))<br>    rotation = object({<br>      next_rotation_time = string<br>      rotation_period    = string<br>    })<br>    secret_data = string<br>  }))</pre> | `[]` | no |
+| secrets | The list of the secrets | <pre>list(object({<br>    name                  = string<br>    automatic_replication = bool<br>    user_managed_replication = list(object({<br>      location     = string<br>      kms_key_name = string<br>    }))<br>    labels = map(string)<br>    topics = list(object({<br>      name = string<br>    }))<br>    rotation = object({<br>      next_rotation_time = string<br>      rotation_period    = string<br>    })<br>    secret_data = string<br>  }))</pre> | `[]` | yes |
 
 ## Outputs
 
@@ -54,7 +59,11 @@ The following dependencies must be available:
 A service account with the following roles must be used to provision
 the resources of this module:
 
-- Storage Admin: `roles/storage.admin`
+- Secret Manager Admin: `roles/secretmanager.admin`
+
+If you want the module to change IAM permissions (for the pubsub and kms use cases), it will require the following additional roles:
+
+- Project IAM Admin: `roles/resourcemanager.projectIamAdmin`
 
 The [Project Factory module][project-factory-module] and the
 [IAM module][iam-module] may be used in combination to provision a
@@ -65,7 +74,7 @@ service account with the necessary roles applied.
 A project with the following APIs enabled must be used to host the
 resources of this module:
 
-- Google Cloud Storage JSON API: `storage-api.googleapis.com`
+- Secret Manager API: `secretmanager.googleapis.com`
 
 The [Project Factory module][project-factory-module] can be used to
 provision a project with the necessary APIs enabled.
