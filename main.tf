@@ -14,23 +14,6 @@
  * limitations under the License.
  */
 
-# locals {
-#   kms_keys = flatten([
-#     for secret in var.secrets : [
-#       for replication in secret.user_managed_replication : [
-#         replication.kms_key_name
-#       ] if lookup(replication, "kms_key_name", null) != null
-#     ] if lookup(secret, "user_managed_replication", null) != null
-#   ])
-#   pubsub_topics = flatten([
-#     for secret in var.secrets : [
-#       for topic in secret.topics : [
-#         topic.name
-#       ] if lookup(topic, "name", null) != null
-#     ] if lookup(secret, "topics", null) != null
-#   ])
-# }
-
 resource "google_project_service_identity" "secretmanager_identity" {
   count    = length(var.add_kms_permissions) > 0 || length(var.add_pubsub_permissions) > 0 ? 1 : 0
   provider = google-beta
@@ -61,12 +44,12 @@ resource "google_secret_manager_secret" "secrets" {
   for_each  = { for secret in var.secrets : secret.name => secret }
   secret_id = each.value.name
   replication {
-    automatic = each.value.automatic_replication != null ? each.value.automatic_replication : null
+    automatic = lookup(each.value, "automatic_replication", null) != null ? true : null
     dynamic "user_managed" {
-      for_each = each.value.user_managed_replication != null ? [1] : []
+      for_each = lookup(var.user_managed_replication, each.key, null) != null ? [1] : []
       content {
         dynamic "replicas" {
-          for_each = lookup(each.value, "user_managed_replication", [])
+          for_each = lookup(var.user_managed_replication, each.key, [])
           content {
             location = replicas.value.location
             dynamic "customer_managed_encryption" {
@@ -80,18 +63,18 @@ resource "google_secret_manager_secret" "secrets" {
       }
     }
   }
-  labels = each.value.labels != null ? each.value.labels : null
+  labels = lookup(var.labels, each.key, null)
   dynamic "topics" {
-    for_each = lookup(each.value, "topics") == null ? [] : lookup(each.value, "topics")
+    for_each = lookup(var.topics, each.key, [])
     content {
       name = topics.value.name
     }
   }
   dynamic "rotation" {
-    for_each = lookup(each.value, "rotation") == null ? [] : [each.value.rotation]
+    for_each = (lookup(each.value, "next_rotation_time", null) != null || lookup(each.value, "rotation_period", null) != null) ? [1] : []
     content {
-      next_rotation_time = rotation.value.next_rotation_time
-      rotation_period    = rotation.value.rotation_period
+      next_rotation_time = lookup(each.value, "next_rotation_time", null)
+      rotation_period    = lookup(each.value, "rotation_period", null)
     }
   }
   depends_on = [

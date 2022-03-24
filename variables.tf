@@ -20,25 +20,24 @@ variable "project_id" {
 }
 
 variable "secrets" {
-  type = list(object({
-    name                  = string
-    automatic_replication = bool
-    user_managed_replication = list(object({
-      location     = string
-      kms_key_name = string
-    }))
-    labels = map(string)
-    topics = list(object({
-      name = string
-    }))
-    rotation = object({
-      next_rotation_time = string
-      rotation_period    = string
-    })
-    secret_data = string
-  }))
+  type        = list(map(string))
   description = "The list of the secrets"
-  default     = []
+  # default     = []
+}
+
+variable "user_managed_replication" {
+  type        = map(list(object({ location = string, kms_key_name = string })))
+  description = "Replication parameters that will be used for defined secrets"
+}
+
+variable "topics" {
+  type        = map(list(object({ name = string })))
+  description = "topics that will be used for defined secrets"
+}
+
+variable "labels" {
+  type        = map(map(string))
+  description = "labels to be added for the defined secrets"
 }
 
 variable "add_kms_permissions" {
