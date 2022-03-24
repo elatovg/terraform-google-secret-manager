@@ -1,6 +1,8 @@
 # terraform-google-secret-manager
 
-This modules makes it easy to create Google Secret Manager secrets.
+This modules makes it easy to create Google Secret Manager secrets. If enabled it can enable the use of KMS keys for encrypting the secrets. Also if rotation is enabled and pubsub topics are passed in, then notification about secret rotation are sent to the pubsub topics. Here is a diagram of the resources that are deployed:
+
+![arch_diagram](./assets/tf-secrets.png)
 
 ## Usage
 
