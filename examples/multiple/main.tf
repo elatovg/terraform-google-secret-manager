@@ -54,60 +54,55 @@ module "secret-manager" {
   project_id = var.project_id
   secrets = [
     {
-      name                  = "secret_1"
-      automatic_replication = null
-      user_managed_replication = [
-        {
-          location     = "us-east1"
-          kms_key_name = google_kms_crypto_key.crypto_key_east.id
-        },
-        {
-          location     = "us-central1"
-          kms_key_name = google_kms_crypto_key.crypto_key_central.id
-        }
-      ]
-      labels = {
-        key1 : "value1",
-        key2 : "value2"
-      }
-      topics = [
-        {
-          name = google_pubsub_topic.secret_topic_1.id
-        },
-        {
-          name = google_pubsub_topic.secret_topic_2.id
-        }
-      ]
-      rotation = {
-        next_rotation_time = "2024-10-02T15:01:23Z"
-        rotation_period    = "31536000s"
-      }
-      secret_data = "my_secret"
+      name               = "secret-1"
+      next_rotation_time = "2024-10-02T15:01:23Z"
+      rotation_period    = "31536000s"
+      secret_data        = "my_secret"
     },
     {
-      name                     = "secret_2"
-      automatic_replication    = true
-      user_managed_replication = null
-      labels                   = null
-      topics                   = null
-      rotation                 = null
-      secret_data              = "my_secret2"
+      name                  = "secret-2"
+      automatic_replication = true
+      secret_data           = "my_secret2"
     },
     {
-      name                  = "secret_3"
-      automatic_replication = null
-      user_managed_replication = [
-        {
-          location     = "us-central1"
-          kms_key_name = google_kms_crypto_key.crypto_key_central.id
-        },
-      ]
-      labels      = null
-      topics      = null
-      rotation    = null
-      secret_data = "my_secret2"
+      name        = "secret-3"
+      secret_data = "my_secret3"
     }
   ]
+  user_managed_replication = {
+    secret-1 = [
+      {
+        location     = "us-east1"
+        kms_key_name = google_kms_crypto_key.crypto_key_east.id
+      },
+      {
+        location     = "us-central1"
+        kms_key_name = google_kms_crypto_key.crypto_key_central.id
+      }
+    ]
+    secret-3 = [
+      {
+        location     = "us-central1"
+        kms_key_name = google_kms_crypto_key.crypto_key_central.id
+      },
+    ]
+  }
+  topics = {
+    secret-1 = [
+      {
+        name = google_pubsub_topic.secret_topic_1.id
+      },
+      {
+        name = google_pubsub_topic.secret_topic_2.id
+      }
+    ]
+  }
+  labels = {
+    secret-1 = {
+      key1 : "value1",
+      key2 : "value2"
+    }
+  }
   add_kms_permissions = [
     google_kms_crypto_key.crypto_key_east.id,
     google_kms_crypto_key.crypto_key_central.id

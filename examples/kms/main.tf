@@ -46,22 +46,19 @@ module "secret-manager" {
   project_id = var.project_id
   secrets = [
     {
-      name                  = "secret-1"
-      automatic_replication = null
-      user_managed_replication = [
-        {
-          location     = var.region
-          kms_key_name = google_kms_crypto_key.crypto_key.id
-        },
-      ]
-      labels      = null
-      topics      = null
-      rotation    = null
+      name        = "secret-1"
       secret_data = "secret information"
     },
   ]
-  add_kms_permissions    = []
-  add_pubsub_permissions = []
+  user_managed_replication = {
+    secret-1 = [
+      {
+        location     = var.region
+        kms_key_name = google_kms_crypto_key.crypto_key.id
+      },
+    ]
+  }
+
   depends_on = [
     google_kms_crypto_key_iam_member.sm_sa_encrypter_decrypter
   ]

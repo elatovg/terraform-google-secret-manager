@@ -22,7 +22,6 @@ resource "google_project_service_identity" "secretmanager_identity" {
 }
 
 resource "google_kms_crypto_key_iam_member" "sm_sa_encrypter_decrypter" {
-  # for_each      = toset(var.add_kms_permissions)
   count         = var.add_kms_permissions != null ? length(var.add_kms_permissions) : 0
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
@@ -31,11 +30,9 @@ resource "google_kms_crypto_key_iam_member" "sm_sa_encrypter_decrypter" {
 
 resource "google_pubsub_topic_iam_member" "sm_sa_publisher" {
   project = var.project_id
-  # for_each = toset(var.add_pubsub_permissions)
   count  = var.add_pubsub_permissions != null ? length(var.add_pubsub_permissions) : 0
   role   = "roles/pubsub.publisher"
   member = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
-  # topic    = each.value
   topic = var.add_pubsub_permissions[count.index]
 }
 

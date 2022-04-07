@@ -20,3 +20,4 @@ No providers.
 | Name | Description |
 |------|-------------|
 | <a name="output_secret_names"></a> [secret\_names](#output\_secret\_names) | List of secret names |
+| <a name="output_secret_versions"></a> [secret\_versions](#output\_secret\_versions) | List of secret versions |

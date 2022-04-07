@@ -17,10 +17,6 @@ module "secret-manager" {
     {
       name                     = "secret-1"
       automatic_replication    = true
-      user_managed_replication = null
-      labels                   = null
-      topics                   = null
-      rotation                 = null
       secret_data              = "secret information"
     },
   ]
@@ -33,16 +29,20 @@ Functional examples are included in the [examples](./examples/) directory.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| add\_kms\_permissions | The list of the crypto keys to give secret manager access to | `list(string)` | `[]` | no |
-| add\_pubsub\_permissions | The list of the pubsub topics to give secret manager access to | `list(string)` | `[]` | no |
-| project\_id | The project ID to manage the Secret Manager resources | `string` | n/a | yes |
-| secrets | The list of the secrets | <pre>list(object({<br>    name                  = string<br>    automatic_replication = bool<br>    user_managed_replication = list(object({<br>      location     = string<br>      kms_key_name = string<br>    }))<br>    labels = map(string)<br>    topics = list(object({<br>      name = string<br>    }))<br>    rotation = object({<br>      next_rotation_time = string<br>      rotation_period    = string<br>    })<br>    secret_data = string<br>  }))</pre> | `[]` | yes |
+| <a name="input_add_kms_permissions"></a> [add\_kms\_permissions](#input\_add\_kms\_permissions) | The list of the crypto keys to give secret manager access to | `list(string)` | `[]` | no |
+| <a name="input_add_pubsub_permissions"></a> [add\_pubsub\_permissions](#input\_add\_pubsub\_permissions) | The list of the pubsub topics to give secret manager access to | `list(string)` | `[]` | no |
+| <a name="input_labels"></a> [labels](#input\_labels) | labels to be added for the defined secrets | `map(map(string))` | `{}` | no |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The project ID to manage the Secret Manager resources | `string` | n/a | yes |
+| <a name="input_secrets"></a> [secrets](#input\_secrets) | The list of the secrets | `list(map(string))` | `[]` | no |
+| <a name="input_topics"></a> [topics](#input\_topics) | topics that will be used for defined secrets | `map(list(object({ name = string })))` | `{}` | no |
+| <a name="input_user_managed_replication"></a> [user\_managed\_replication](#input\_user\_managed\_replication) | Replication parameters that will be used for defined secrets | `map(list(object({ location = string, kms_key_name = string })))` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| secret\_names | The name list of Secrets |
+| <a name="output_secret_names"></a> [secret\_names](#output\_secret\_names) | The name list of Secrets |
+| <a name="output_secret_versions"></a> [secret\_versions](#output\_secret\_versions) | The name list of Secret Versions |
 
 ## Requirements
 

@@ -22,22 +22,25 @@ variable "project_id" {
 variable "secrets" {
   type        = list(map(string))
   description = "The list of the secrets"
-  # default     = []
+  default     = []
 }
 
 variable "user_managed_replication" {
   type        = map(list(object({ location = string, kms_key_name = string })))
   description = "Replication parameters that will be used for defined secrets"
+  default     = {}
 }
 
 variable "topics" {
   type        = map(list(object({ name = string })))
   description = "topics that will be used for defined secrets"
+  default     = {}
 }
 
 variable "labels" {
   type        = map(map(string))
   description = "labels to be added for the defined secrets"
+  default     = {}
 }
 
 variable "add_kms_permissions" {

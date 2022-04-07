@@ -41,24 +41,20 @@ module "secret-manager" {
   project_id = var.project_id
   secrets = [
     {
-      name                     = "secret-1"
-      automatic_replication    = true
-      user_managed_replication = null
-      labels                   = null
-      topics = [
-        {
-          name = google_pubsub_topic.secret.id
-        }
-      ]
-      rotation = {
-        next_rotation_time = "2024-10-02T15:01:23Z"
-        rotation_period    = "31536000s"
-      }
-      secret_data = "secret information"
+      name                  = "secret-1"
+      automatic_replication = true
+      next_rotation_time    = "2024-10-02T15:01:23Z"
+      rotation_period       = "31536000s"
+      secret_data           = "secret information"
     },
   ]
-  add_kms_permissions    = []
-  add_pubsub_permissions = []
+  topics = {
+    secret-1 = [
+      {
+        name = google_pubsub_topic.secret.id
+      }
+    ]
+  }
   depends_on = [
     google_pubsub_topic_iam_member.sm_sa_publisher
   ]
