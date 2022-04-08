@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+locals {
+  region = "us-central1"
+}
 resource "random_id" "random_kms_suffix" {
   byte_length = 2
 }
 
 resource "google_kms_key_ring" "key_ring" {
   name     = "key-ring-${random_id.random_kms_suffix.hex}"
-  location = var.region
+  location = local.region
   project  = var.project_id
 }
 
@@ -53,7 +56,7 @@ module "secret-manager" {
   user_managed_replication = {
     secret-1 = [
       {
-        location     = var.region
+        location     = local.region
         kms_key_name = google_kms_crypto_key.crypto_key.id
       },
     ]

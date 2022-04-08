@@ -24,4 +24,11 @@ output "secret_versions" {
   description = "List of secret versions"
 }
 
+output "project_number" {
+  value = data.google_project.gcp_project.number
+}
+
+output "project_id" {
+  value = var.project_id
+}
 

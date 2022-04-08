@@ -28,6 +28,8 @@ module "project" {
     "cloudresourcemanager.googleapis.com",
     "storage-api.googleapis.com",
     "serviceusage.googleapis.com",
-    "secretmanager.googleapis.com"
+    "secretmanager.googleapis.com",
+    "pubsub.googleapis.com",
+    "cloudkms.googleapis.com"
   ]
 }

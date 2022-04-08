@@ -18,8 +18,3 @@ variable "project_id" {
   type        = string
   description = "The project ID to manage the Secret Manager resources"
 }
-
-variable "region" {
-  type        = string
-  description = "Region to create kms key and secret replicas in"
-}

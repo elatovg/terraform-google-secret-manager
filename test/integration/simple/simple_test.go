@@ -12,28 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package multiple_buckets
+package simple
 
 import (
 	"testing"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSimplesecret(t *testing.T) {
-	secret := tft.NewTFBlueprintTest(t)
+func TestSimpleSecret(t *testing.T) {
+	secretT := tft.NewTFBlueprintTest(t)
 
-	secret.DefineVerify(func(assert *assert.Assertions) {
-		secret.DefaultVerify(assert)
+	secretT.DefineVerify(func(assert *assert.Assertions) {
+		secretT.DefaultVerify(assert)
 
-		projectID := secret.GetStringOutput("project_id")
-		secrets := gcloud.Run(t, "secrets list", gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json"})).Array()
-
-		match := utils.GetFirstMatchResult(t, secrets, "config.name", "storage.googleapis.com")
-		assert.Equal("ENABLED", match.Get("state").String(), "storage service should be enabled")
+		projectNUM := secretT.GetStringOutput("project_number")
+		op := gcloud.Run(t, fmt.Sprintf("secrets describe %s --project %s", "secret-1", secretT.GetStringOutput("project_id")))
+		assert.Equal(fmt.Sprintf("projects/%s/secrets/secret-1", projectNUM), op.Get("name").String(), "has expected name")
 	})
-	secret.Test()
+	secretT.Test()
 }

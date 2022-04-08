@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+data "google_project" "gcp_project" {
+  project_id = var.project_id
+}
+
 module "secret-manager" {
   source     = "../../"
   project_id = var.project_id

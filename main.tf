@@ -30,10 +30,10 @@ resource "google_kms_crypto_key_iam_member" "sm_sa_encrypter_decrypter" {
 
 resource "google_pubsub_topic_iam_member" "sm_sa_publisher" {
   project = var.project_id
-  count  = var.add_pubsub_permissions != null ? length(var.add_pubsub_permissions) : 0
-  role   = "roles/pubsub.publisher"
-  member = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
-  topic = var.add_pubsub_permissions[count.index]
+  count   = var.add_pubsub_permissions != null ? length(var.add_pubsub_permissions) : 0
+  role    = "roles/pubsub.publisher"
+  member  = "serviceAccount:${google_project_service_identity.secretmanager_identity[0].email}"
+  topic   = var.add_pubsub_permissions[count.index]
 }
 
 resource "google_secret_manager_secret" "secrets" {
